@@ -5,6 +5,7 @@ import os
 import time
 import yaml
 from setting import Setting
+from clock import Clock
 
 def initial_pos(r):
     return np.sin(r[0]*2*np.pi)*np.sin(r[1]*2*np.pi)*np.sin(r[2]*2*np.pi)
@@ -18,16 +19,16 @@ class Data:
         q_init_list = np.reshape(map(initial_pos, itertools.product(space_list, repeat=setting.dim)), setting.qtt_shape(), order='F')
 
         self.q = tt.vector(q_init_list, setting.tol)
-        self.p = (setting.tau*tt.matvec(self.L, self.q)).round(setting.tol)        
+        self.p = (setting.tau*tt.matvec(self.L, self.q)).round(setting.tol, rmax=setting.rmax)
         self.step = 0
         self.write_num = 0
 
     def next_step(self):
         tau = setting.tau
         next_q = self.q + tau*self.p
-        next_q = next_q.round(setting.tol)
+        next_q = next_q.round(setting.tol, rmax=setting.rmax)
         next_p = self.p + tt.matvec(tau*self.L, next_q)
-        next_p = next_p.round(setting.tol)
+        next_p = next_p.round(setting.tol, rmax=setting.rmax)
 
         self.q = next_q
         self.p = next_p
@@ -52,14 +53,14 @@ class Data:
 
 current_time = time.strftime("20%y%d%m_%T")
 
-setting = Setting(n=6, dim=3, tau=1e-4, tol=1e-4, max_T=0.5, result_dir='3D/qtt/{}'.format(current_time))
-
+setting = Setting(n=6, dim=3, tau=1e-4, tol=1e-4, max_T=0.5, rmax=10, result_dir='3D/qtt/{}'.format(current_time))
 data = Data(setting)
 
-for i in range(setting.max_iter):
-    data.next_step()
-    if i%(setting.max_iter/9) == 0:
-        data.write()
+with Clock() as clock:
+    for i in range(setting.max_iter):
+        data.next_step()
+        if i%(setting.max_iter/9) == 0:
+            data.write()
 
-    if i%100 == 0:
-        data.energy_calc()
+        if i%100 == 0:
+            data.energy_calc()

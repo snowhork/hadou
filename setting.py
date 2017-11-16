@@ -2,7 +2,7 @@ import numpy as np
 import os, yaml
 
 class Setting:
-    def __init__(self, n, dim, tau, tol, max_T, result_dir):
+    def __init__(self, n, dim, tau, tol, max_T, result_dir, rmax=100000):
         self.n = n
         self.dim = dim
         self.tau = tau
@@ -11,6 +11,7 @@ class Setting:
         self.h = 1.0/(self.N+1)
         self.result_dir = result_dir
         self.max_T = max_T
+        self.rmax = rmax
         if not os.path.exists(self.result_path()):
             os.makedirs(self.result_path())
 
@@ -22,7 +23,7 @@ class Setting:
 
 
     def qtt_shape(self):
-        return [2]*(setting.n*setting.dim)
+        return [2]*(self.n*self.dim)
 
     def result_path(self):
         return "result/{}".format(self.result_dir)
@@ -40,5 +41,6 @@ class Setting:
             'tol':  self.tol,
             'N':    self.N,
             'h':    self.h,
-            'max_T':self.max_T
+            'max_T':self.max_T,
+            'rmax':self.rmax
         } 

@@ -6,6 +6,7 @@ from scipy.sparse import kron
 from scipy import matmul
 
 from setting import Setting
+from clock import Clock
 
 def initial_pos(r):
     return np.sin(r[0]*2*np.pi)*np.sin(r[1]*2*np.pi)*np.sin(r[2]*2*np.pi)
@@ -67,10 +68,11 @@ setting = Setting(n=6, dim=3, tau=1e-4, tol=1e-4, max_T=0.5, result_dir='3D/spar
 
 data = Data(setting)
 
-for i in range(setting.max_iter):
-    data.next_step()
-    if i%(setting.max_iter/9) == 0:
-        data.write()
+with Clock() as clock:
+    for i in range(setting.max_iter):
+        data.next_step()
+        if i%(setting.max_iter/9) == 0:
+            data.write()
 
-    if i%100 == 0:
-        data.energy_calc()
+        if i%100 == 0:
+            data.energy_calc()
