@@ -1,9 +1,10 @@
 import numpy as np
 import itertools
-import tt
-import os
 import time
-import yaml
+import scipy.sparse as sparse
+from scipy.sparse import kron
+from scipy import matmul
+
 from setting import Setting
 
 def initial_pos(r):
@@ -12,22 +13,32 @@ def initial_pos(r):
 class Data:
     def __init__(self, setting):
         self.setting = setting
-        self.L = (-1.0/(setting.h*setting.h))*tt.qlaplace_dd([setting.n]*setting.dim)
+
+        N = setting.N
+
+        data = [-2,1] + [1, -2, 1]*(N-2) + [1, -2]
+
+        row = [0,0] + reduce(lambda sum, i: sum + [i, i, i], range(1, N-1), []) + [N-1,N-1]
+        col = [0,1] + reduce(lambda sum, i: sum + [i, i+1, i+2], range(0, N-2), []) + [N-2,N-1]
+
+        _L = sparse.csr_matrix((data,(row,col)), (N, N))
+        _I = sparse.identity(N)
+
+        self.L = kron(kron(_L, _I), _I) + kron(kron(_I, _L), _I) + kron(kron(_I, _I), _L)
+        self.L /= setting.h**2
 
         space_list = np.linspace(0, 1, 2**setting.n)
-        q_init_list = np.reshape(map(initial_pos, itertools.product(space_list, repeat=setting.dim)), setting.qtt_shape(), order='F')
+        q_init_list = map(initial_pos, itertools.product(space_list, repeat=setting.dim))
 
-        self.q = tt.vector(q_init_list, setting.tol)
-        self.p = (setting.tau*tt.matvec(self.L, self.q)).round(setting.tol)        
+        self.q = np.array(q_init_list)
+        self.p = setting.tau*self.L.dot(self.q)
         self.step = 0
         self.write_num = 0
 
     def next_step(self):
         tau = setting.tau
         next_q = self.q + tau*self.p
-        next_q = next_q.round(setting.tol)
-        next_p = self.p + tt.matvec(tau*self.L, next_q)
-        next_p = next_p.round(setting.tol)
+        next_p = self.p + tau*self.L.dot(next_q)
 
         self.q = next_q
         self.p = next_p
@@ -35,11 +46,11 @@ class Data:
 
     def write(self):
         file_name = os.path.join(self.setting.result_path(), 'result_{}.csv'.format(self.write_num))
-        np.savetxt(file_name, self.q.full().flatten(order='F'), delimiter=',')
+        np.savetxt(file_name, self.q, delimiter=',')
         self.write_num += 1
 
     def energy_calc(self):
-        print("{}: {}".format(data.step, data.q.erank))
+        print("{}".format(data.step))
         return
         K = self.p.norm()**2/2.0
         q_full = self.q.full().flatten(order='F')
@@ -52,7 +63,7 @@ class Data:
 
 current_time = time.strftime("20%y%d%m_%T")
 
-setting = Setting(n=6, dim=3, tau=1e-4, tol=1e-4, max_T=0.5, result_dir='3D/qtt/{}'.format(current_time))
+setting = Setting(n=6, dim=3, tau=1e-4, tol=1e-4, max_T=0.5, result_dir='3D/sparse/{}'.format(current_time))
 
 data = Data(setting)
 

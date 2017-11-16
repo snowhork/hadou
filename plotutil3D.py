@@ -1,20 +1,22 @@
 import numpy as np
-import os
+import sys, os, yaml
 import matplotlib.pyplot as plt
 import itertools
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
-base_path = 'result/3D/qtt_test3'
+base_path = sys.argv[1]
 base_name = 'result'
 
+with open(os.path.join(base_path, 'setting.yml'), "r") as f:
+    setting = yaml.load(f)
+
 t_list = range(9)
-n = 6
+n = setting['n']
 N = 2**n
 
 space_list = np.linspace(0, 1, N)
 X, Y = np.meshgrid(space_list, space_list)
-
 
 fig = plt.figure()
 
