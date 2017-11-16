@@ -73,7 +73,7 @@ class Data:
         print("{}: {}".format(data.step, energy))
 
 
-setting = Setting(n=6, dim=3, tau=1e-4, tol=1e-7, max_T=0.5, result_dir='3D/qtt_test3')
+setting = Setting(n=6, dim=3, tau=1e-4, tol=1e-4, max_T=0.5, result_dir='3D/qtt_test3')
 
 data = Data(setting)
 

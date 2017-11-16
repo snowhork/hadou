@@ -5,7 +5,7 @@ import itertools
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
-base_path = 'result/3D/qtt_test2'
+base_path = 'result/3D/qtt_test3'
 base_name = 'result'
 
 t_list = range(9)
