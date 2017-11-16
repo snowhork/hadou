@@ -6,7 +6,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
 base_path = sys.argv[1]
-base_name = 'result'
+base_name = 'q'
 
 with open(os.path.join(base_path, 'setting.yml'), "r") as f:
     setting = yaml.load(f)

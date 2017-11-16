@@ -1,18 +1,12 @@
 import numpy as np
+import os
 import itertools
-import time
 import scipy.sparse as sparse
 from scipy.sparse import kron
 from scipy import matmul
 
-from setting import Setting
-from clock import Clock
-
-def initial_pos(r):
-    return np.sin(r[0]*2*np.pi)*np.sin(r[1]*2*np.pi)*np.sin(r[2]*2*np.pi)
-
-class Data:
-    def __init__(self, setting):
+class SparseData:
+    def __init__(self, setting, initial_pos):
         self.setting = setting
 
         N = setting.N
@@ -37,7 +31,7 @@ class Data:
         self.write_num = 0
 
     def next_step(self):
-        tau = setting.tau
+        tau = self.setting.tau
         next_q = self.q + tau*self.p
         next_p = self.p + tau*self.L.dot(next_q)
 
@@ -46,12 +40,15 @@ class Data:
         self.step += 1
 
     def write(self):
-        file_name = os.path.join(self.setting.result_path(), 'result_{}.csv'.format(self.write_num))
+        file_name = os.path.join(self.setting.result_path(), 'q_{}.csv'.format(self.write_num))
         np.savetxt(file_name, self.q, delimiter=',')
+
+        file_name = os.path.join(self.setting.result_path(), 'p_{}.csv'.format(self.write_num))
+        np.savetxt(file_name, self.p, delimiter=',')
         self.write_num += 1
 
     def energy_calc(self):
-        print("{}".format(data.step))
+        print("{}".format(self.step))
         return
         K = self.p.norm()**2/2.0
         q_full = self.q.full().flatten(order='F')
@@ -60,23 +57,3 @@ class Data:
         energy = K - U
 
         print("{}: {}".format(data.step, energy))
-
-
-current_time = time.strftime("20%y%d%m_%T")
-
-setting = Setting(n=6, dim=3, tau=1e-4, tol=1e-4, max_T=0.5, result_dir='3D/sparse/{}'.format(current_time))
-
-data = Data(setting)
-
-with Clock(output_path=setting.result_path()) as clock:
-    for i in range(setting.max_iter):
-        data.next_step()
-        if i%(setting.max_iter/9) == 0:
-            data.write()
-
-        if i%100 == 0:
-            data.energy_calc()
-
-        if i == setting.max_iter-1:
-            data.write()
-
