@@ -2,7 +2,7 @@ import numpy as np
 import os, yaml
 
 class Setting:
-    def __init__(self, n, dim, tau, tol, max_T, result_dir, rmax=100000):
+    def __init__(self, n, dim, tau, tol, max_T, result_dir=None, rmax=100000):
         self.n = n
         self.dim = dim
         self.tau = tau
@@ -12,14 +12,16 @@ class Setting:
         self.result_dir = result_dir
         self.max_T = max_T
         self.rmax = rmax
-        if not os.path.exists(self.result_path()):
-            os.makedirs(self.result_path())
+
 
         print("max_iter: {}".format(self.max_iter))
-        print("result_path: {}".format(self.result_path()))
 
-        with open(os.path.join(self.result_path(), 'setting.yml'), "w") as f:
-            f.write(yaml.dump(self.to_dict(), default_flow_style=False))        
+        if not result_dir == None:
+            if not os.path.exists(self.result_path()):
+                os.makedirs(self.result_path())
+
+            with open(os.path.join(self.result_path(), 'setting.yml'), "w") as f:
+                f.write(yaml.dump(self.to_dict(), default_flow_style=False))        
 
 
     def qtt_shape(self):
