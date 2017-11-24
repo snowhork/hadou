@@ -15,7 +15,7 @@ t_list = range(9)
 n = setting['n']
 N = 2**n
 
-space_list = np.linspace(0, 1, N)
+space_list = np.linspace(0, 1, N+2)[1:N+1]
 X, Y = np.meshgrid(space_list, space_list)
 
 fig = plt.figure()
@@ -25,11 +25,11 @@ for i, t in enumerate(t_list):
     q = np.loadtxt(os.path.join(base_path, "{}_{}.csv".format(base_name, t)))
     q = q.reshape([N, N, N], order='F')
 
-    Z = q[20, :, :]
+    Z = q[16, :, :]
 
     fig.suptitle('t={}'.format(t))        
     ax = fig.add_subplot(3, 3, i+1, projection='3d')
     ax.set_zlim([-1, 1])
-    surf = ax.plot_surface(X,Y,Z,cmap=cm.coolwarm, cstride=4, rstride=4, antialiased=True)
+    surf = ax.plot_surface(X,Y,Z,cmap=cm.coolwarm, cstride=n-2, rstride=n-2, antialiased=True)
 
 plt.show()

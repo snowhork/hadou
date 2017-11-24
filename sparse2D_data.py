@@ -22,7 +22,7 @@ class Sparse2DData:
         self.L = kron(_L, _I) + kron(_I, _L)
         self.L /= setting.h**2
 
-        space_list = np.linspace(0, 1, 2**setting.n)
+        space_list = np.linspace(0, 1, N+2)[1:N+1]
         q_init_list = map(initial_pos, itertools.product(space_list, repeat=setting.dim))
 
         self.q = np.array(q_init_list)

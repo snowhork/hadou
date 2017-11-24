@@ -22,12 +22,12 @@ class SparseData:
         self.L = kron(kron(_L, _I), _I) + kron(kron(_I, _L), _I) + kron(kron(_I, _I), _L)
         self.L /= setting.h**2
 
-        space_list = np.linspace(0, 1, 2**setting.n)
+        space_list = np.linspace(0, 1, N+2)[1:N+1]
         q_init_list = map(initial_pos, itertools.product(space_list, repeat=setting.dim))
 
         self.q = np.array(q_init_list)
         self.p = setting.tau*self.L.dot(self.q)
-        self.step = 0
+        self.step = 1
         self.write_num = 0
 
     def next_step(self):
@@ -46,6 +46,8 @@ class SparseData:
         file_name = os.path.join(self.setting.result_path(), 'p_{}.csv'.format(self.write_num))
         np.savetxt(file_name, self.p, delimiter=',')
         self.write_num += 1
+
+        print("write: step: {}, t: {}".format(self.step, self.step*self.setting.tau))
 
     def energy_calc(self):
         print("{}".format(self.step))

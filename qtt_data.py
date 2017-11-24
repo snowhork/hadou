@@ -7,8 +7,9 @@ class QTTData:
     def __init__(self, setting, initial_pos):
         self.setting = setting
         self.L = (-1.0/(setting.h*setting.h))*tt.qlaplace_dd([setting.n]*setting.dim)
+        N = setting.N
 
-        space_list = np.linspace(0, 1, 2**setting.n)
+        space_list = np.linspace(0, 1, N+2)[1:N+1]
         q_init_list = np.reshape(map(initial_pos, itertools.product(space_list, repeat=setting.dim)), setting.qtt_shape(), order='F')
 
         self.q = tt.vector(q_init_list, setting.tol)
@@ -37,6 +38,9 @@ class QTTData:
         file_name = os.path.join(self.setting.result_path(), 'p_{}.csv'.format(self.write_num))
         np.savetxt(file_name, self.p.full().flatten(order='F'), delimiter=',')
         self.write_num += 1
+
+        print("write: step: {}, t: {}".format(self.step, self.step*self.setting.tau))
+        
 
     def energy_calc(self):
         print("{}: {}".format(self.step, self.q.erank))

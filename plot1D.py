@@ -15,7 +15,7 @@ t_list = range(9)
 n = setting['n']
 N = 2**n
 
-space_list = np.linspace(0, 1, N)
+space_list = np.linspace(0, 1, N+2)[1:N+1]
 
 fig = plt.figure()
 
