@@ -8,7 +8,6 @@ from clock import Clock
 # def initial_pos3D(r):
 #     return np.sin(r[0]*2*np.pi)*np.sin(r[1]*2*np.pi)*np.sin(r[2]*2*np.pi)
 
-
 def initial_pos3D(r):
     x = 0
     if r[0] <= 0.8:
@@ -46,19 +45,21 @@ if len(sys.argv) > 2 and sys.argv[2] == 'nowrite':
 dim = 3
 initial_pos = initial_pos3D
 if type == 'qtt3D':
-    from qtt_data import QTTData as Data
+    from data.qtt_data import QTTData as Data
+    from hadou_scheme.hadou_qtt import HadouQTTScheme as Scheme
 elif type == 'sparse3D':
-    from sparse_data import SparseData as Data
+    from data.sparse_data import SparseData as Data
+    from hadou_scheme.hadou_sparse import HadouSparseScheme as Scheme
 elif type == 'sparse1D':
-    from sparse1D_data import Sparse1DData as Data
+    from data.sparse1D_data import Sparse1DData as Data
     dim = 1
     initial_pos = initial_pos1D
 elif type == 'sparse2D':
-    from sparse2D_data import Sparse2DData as Data
+    from data.sparse2D_data import Sparse2DData as Data
     dim = 2
     initial_pos = initial_pos2D
 elif type == 'sparse2D2':
-    from sparse2D_data2 import Sparse2DData2 as Data
+    from data.sparse2D_data2 import Sparse2DData2 as Data
     initial_pos = initial_pos2D    
     dim = 2
 else:
@@ -71,15 +72,23 @@ setting = Setting(n=6, dim=dim, tau=1e-4, tol=1e-4, max_T=0.3, rmax=10000, resul
 
 data = Data(setting, initial_pos)
 
+class Calcurator(Data, Scheme):
+    def __init__(self, setting, initial_pos):
+        super(Calcurator, self).__init__(setting, initial_pos)
+        self.initial_step()
+
+
+calc = Calcurator(setting, initial_pos)
+
 with Clock(output_path=setting.result_path()) as clock:
     for i in range(setting.max_iter):
-        data.next_step()
+        calc.next_step()
         if i%(setting.max_iter/8) == 0 and write:
-            data.write()
+            calc.write()
 
         if i%100 == 0:
-            data.energy_calc()
+            calc.show()
 
-data.write()
+calc.write()
 print("result_path: {}".format(setting.result_path()))
 
