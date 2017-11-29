@@ -1,7 +1,6 @@
 import itertools
 import numpy as np
 import tt
-from tt.amen import amen_mv
 
 class HadouQTTScheme(object):
     def initial_step(self):
@@ -12,9 +11,6 @@ class HadouQTTScheme(object):
         q_init_list = np.reshape(map(self.initial_pos, itertools.product(space_list, repeat=setting.dim)), setting.qtt_shape(), order='F')
 
         self.q = tt.vector(q_init_list, setting.tol)
-
-        res, _ = amen_mv(self.L, self.q, setting.tol)        
-        # self.p = setting.tau*res
         self.p = (setting.tau*tt.matvec(self.L, self.q)).round(setting.tol, rmax=setting.rmax)
 
         self.step = 1
@@ -29,8 +25,6 @@ class HadouQTTScheme(object):
         next_q = next_q.round(tol, rmax=rmax)
 
         next_p = self.p + tau*tt.matvec(self.L, next_q)
-        # res, _ = amen_mv(self.L, next_q, tol)
-        # next_p = self.p + tau*res
         next_p = next_p.round(tol, rmax=rmax)    
 
         self.q = next_q

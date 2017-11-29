@@ -71,7 +71,7 @@ else:
 current_time = time.strftime("20%y%d%m_%T")
 
 # 1.0/np.sqrt(3)/2.0 = 0.28867513459481292
-setting = Setting(n=6, dim=dim, tau=1e-4, tol=1e-4, max_T=0.3, rmax=10000, result_dir='{}/{}'.format(type, current_time))
+setting = Setting(n=7, dim=dim, tau=1e-4, tol=1e-4, max_T=0.3, rmax=10000, result_dir='{}/{}'.format(type, current_time))
 
 data = Data(setting, initial_pos)
 

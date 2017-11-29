@@ -1,6 +1,7 @@
 import itertools
 import numpy as np
 import tt
+from tt.amen import amen_mv
 
 class HadouQTT2Scheme(object):
     def initial_step(self):
@@ -22,7 +23,7 @@ class HadouQTT2Scheme(object):
         tol = self.setting.tol
         rmax = self.setting.rmax
 
-        next_x = tt.matvec(self.A, self.x).round(tol)
+        next_x, _ = amen_mv(self.A, self.x, tol, verb=False)
 
         self.x = next_x
         self.step += 1
