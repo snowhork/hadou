@@ -11,7 +11,8 @@ base_name = 'q'
 with open(os.path.join(base_path, 'setting.yml'), "r") as f:
     setting = yaml.load(f)
 
-t_list = range(9)
+t_list = [0, 2, 4, 6]
+# t_list = range(9)
 n = setting['n']
 dim = setting['dim']
 N = 2**n
@@ -27,6 +28,7 @@ if dim == 1:
 
         ax = fig.add_subplot(3, 3, i+1)
         ax.set_ylim([-1, 1])
+
         surf = ax.plot(space_list,q)
 
 else:
@@ -34,17 +36,28 @@ else:
 
         q = np.loadtxt(os.path.join(base_path, "{}_{}.csv".format(base_name, t)))
 
+        # fig.suptitle('t={}'.format(t))
+
+        num = 3
+        if len(t_list) == 4:
+            num = 2
+        ax = fig.add_subplot(num, num, i+1, projection='3d')
+
         if dim == 3:
             q = q.reshape([N, N, N], order='F')
-            Z = q[16, :, :]
+            Z = q[32, :, :]
+            max_iter = int(setting['max_T']/setting['tau'])
+            _t = max_iter/8*t*setting['tau']
+            ax.set_title("t={}".format(_t))
+            ax.set_xlabel("x")
+            ax.set_ylabel("y")
+            ax.set_zlabel("u(x,y,z)")
+
 
         elif dim == 2:
-            q = q.reshape([N, N], order='F')
-            Z = q[16, 16, :]
+            Z = q.reshape([N, N], order='F')
 
-        fig.suptitle('t={}'.format(t))        
-        ax = fig.add_subplot(3, 3, i+1, projection='3d')
-        ax.set_zlim([-1, 1])
+        ax.set_zlim([-0.5, 0.5])
         surf = ax.plot_surface(X,Y,Z,cmap=cm.coolwarm, cstride=n-2, rstride=n-2, antialiased=True)
 
 plt.show()

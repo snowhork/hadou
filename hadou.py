@@ -47,6 +47,9 @@ initial_pos = initial_pos3D
 if type == 'qtt3D':
     from data.qtt_data import QTTData as Data
     from hadou_scheme.hadou_qtt import HadouQTTScheme as Scheme
+elif type == 'qtt2-3D':
+    from data.qtt2_data import QTT2Data as Data
+    from hadou_scheme.hadou_qtt2 import HadouQTT2Scheme as Scheme
 elif type == 'sparse3D':
     from data.sparse_data import SparseData as Data
     from hadou_scheme.hadou_sparse import HadouSparseScheme as Scheme
@@ -63,7 +66,7 @@ elif type == 'sparse2D2':
     initial_pos = initial_pos2D    
     dim = 2
 else:
-    exit
+    assert(False)
 
 current_time = time.strftime("20%y%d%m_%T")
 

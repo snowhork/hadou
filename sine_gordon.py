@@ -6,33 +6,10 @@ from setting import Setting
 from clock import Clock
 
 def initial_pos3D(r):
-    return np.sin(r[0]*2*np.pi)*np.sin(r[1]*2*np.pi)*np.sin(r[2]*2*np.pi)
-
-# def initial_pos3D(r):
-#     x = 0
-#     if r[0] <= 0.8:
-#         x = -np.abs(0.4-r[0]) + 0.4
-#         x *= 1/0.4
-#     y = 0
-#     if r[1] <= 0.8:
-#         y = -np.abs(0.4-r[1]) + 0.4
-#         y *= 1/0.4
-#     z = 0
-#     if r[2] <= 0.8:
-#         z = -np.abs(0.4-r[2]) + 0.4
-#         z *= 1/0.4
-
-
-#     return x*y*z
-
-# def initial_pos2(r):
-#     return np.sin(r[0]*np.pi)*np.sin(r[1]*np.pi)*np.sin(r[2]*np.pi)
+    return 4*np.arctan(np.exp(3-14*np.sqrt((r[0]-0.5)**2 + (r[1]-0.5)**2 + (r[2]-0.5)**2)))
 
 def initial_pos2D(r):
-    return np.sin(r[0]*2*np.pi)*np.sin(r[1]*2*np.pi)
-
-def initial_pos1D(r):
-    return np.sin(r*2*np.pi)
+    return 4*np.arctan(np.exp(3-14*np.sqrt((r[0]-0.5)**2 + (r[1]-0.5)**2)))
 
 type = sys.argv[1]
 
@@ -48,19 +25,25 @@ if type == 'qtt3D':
 elif type == 'sparse3D':
     from data.sparse_data import SparseData as Data
     from sine_gordon_scheme.sine_sparse import SineSparseScheme as Scheme
+elif type == 'sparse2D':
+    from data.sparse_data import SparseData as Data
+    from sine_gordon_scheme.sine_sparse import SineSparseScheme as Scheme
+    initial_pos = initial_pos2D
+
+    dim = 2
 else:
     exit
 
 current_time = time.strftime("20%y%d%m_%T")
 
 # 1.0/np.sqrt(3)/2.0 = 0.28867513459481292
-setting = Setting(n=6, dim=dim, tau=1e-4, tol=1e-4, max_T=0.3, rmax=10000, result_dir='sine/{}/{}'.format(type, current_time))
+setting = Setting(n=7, dim=dim, tau=1e-6, tol=1e-4, max_T=0.02, rmax=10000, result_dir='sine/{}/{}'.format(type, current_time))
 
 data = Data(setting, initial_pos)
 
 class Calcurator(Data, Scheme):
-    def __init__(self, setting, initial_pos):
-        super(Calcurator, self).__init__(setting, initial_pos)
+    def __init__(self, setting, initial_pos, neumann=False):
+        super(Calcurator, self).__init__(setting, initial_pos, neumann)
         self.initial_step()
 
 

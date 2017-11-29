@@ -44,5 +44,7 @@ class Setting:
             'N':    self.N,
             'h':    self.h,
             'max_T':self.max_T,
-            'rmax':self.rmax
+            'rmax':self.rmax,
+            'max_iter': self.max_iter
+
         } 

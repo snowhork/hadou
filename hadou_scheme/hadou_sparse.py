@@ -20,4 +20,3 @@ class HadouSparseScheme(object):
         self.q = next_q
         self.p = next_p
         self.step += 1  
-
