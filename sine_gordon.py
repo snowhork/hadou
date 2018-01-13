@@ -6,10 +6,10 @@ from setting import Setting
 from clock import Clock
 
 def initial_pos3D(r):
-    return 4*np.arctan(np.exp(3-14*np.sqrt((r[0]-0.5)**2 + (r[1]-0.5)**2 + (r[2]-0.5)**2)))
+    return np.arctan(np.exp(3-14*np.sqrt((r[0]-0.5)**2 + (r[1]-0.5)**2 + (r[2]-0.5)**2)))
 
 def initial_pos2D(r):
-    return 4*np.arctan(np.exp(3-14*np.sqrt((r[0]-0.5)**2 + (r[1]-0.5)**2)))
+    return np.arctan(np.exp(3-14*np.sqrt((r[0]-0.5)**2 + (r[1]-0.5)**2)))
 
 type = sys.argv[1]
 
@@ -37,7 +37,7 @@ else:
 current_time = time.strftime("20%y%d%m_%T")
 
 # 1.0/np.sqrt(3)/2.0 = 0.28867513459481292
-setting = Setting(n=7, dim=dim, tau=1e-6, tol=1e-4, max_T=0.02, rmax=10000, result_dir='sine/{}/{}'.format(type, current_time))
+setting = Setting(n=7, dim=dim, tau=1e-4, tol=1e-4, max_T=0.3, rmax=10000, result_dir='sine/{}/{}'.format(type, current_time))
 
 data = Data(setting, initial_pos)
 

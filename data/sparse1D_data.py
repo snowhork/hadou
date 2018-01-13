@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.linalg import norm
 import os
 import itertools
 import scipy.sparse as sparse
@@ -8,6 +9,7 @@ from scipy import matmul
 class Sparse1DData:
     def __init__(self, setting, initial_pos):
         self.setting = setting
+        self.initial_pos = initial_pos
 
         N = setting.N
 
@@ -19,23 +21,6 @@ class Sparse1DData:
         self.L = sparse.csr_matrix((data,(row,col)), (N, N))
         self.L /= setting.h**2
 
-        space_list = np.linspace(0, 1, N+2)[1:N+1]
-        q_init_list = map(initial_pos, space_list)
-
-        self.q = np.array(q_init_list)
-        self.p = setting.tau*self.L.dot(self.q)
-        self.step = 0
-        self.write_num = 0
-
-    def next_step(self):
-        tau = self.setting.tau
-        next_q = self.q + tau*self.p
-        next_p = self.p + tau*self.L.dot(next_q)
-
-        self.q = next_q
-        self.p = next_p
-        self.step += 1
-
     def write(self):
         file_name = os.path.join(self.setting.result_path(), 'q_{}.csv'.format(self.write_num))
         np.savetxt(file_name, self.q, delimiter=',')
@@ -44,6 +29,11 @@ class Sparse1DData:
         np.savetxt(file_name, self.p, delimiter=',')
         self.write_num += 1
 
-    def energy_calc(self):
-        print("{}".format(self.step))
-        return
+    def show(self):
+        K = norm(self.p)**2/2.0
+        U = -norm(self.q)**2 + reduce(lambda sum, i: sum + self.q[i]*self.q[i+1], xrange(self.setting.N-1), 0)
+        U /= self.setting.h**2
+        energy = K - U
+
+        print("step: {}, t: {}, E: {}".format(self.step, self.step*self.setting.tau, energy))
+

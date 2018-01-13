@@ -27,6 +27,22 @@ def initial_pos3D(r):
 
     return x*y*z
 
+def initial_pos_kukei(r):
+    x = 0
+    if r[0] <= 0.75 and r[0] >= 0.25:
+        x = 1
+
+    y = 0
+    if r[1] <= 0.75 and r[1] >= 0.25:
+        y = 1
+
+    z = 0
+    if r[2] <= 0.75 and r[2] >= 0.25:
+        z = 1
+
+    return x*y*z
+
+
 # def initial_pos2(r):
 #     return np.sin(r[0]*np.pi)*np.sin(r[1]*np.pi)*np.sin(r[2]*np.pi)
 
@@ -36,6 +52,12 @@ def initial_pos2D(r):
 def initial_pos1D(r):
     return np.sin(r*2*np.pi)
 
+def initial_pos_kukei1D(r):
+    if r[0] <= 0.75 and r[0] >= 0.25:
+        return 0.9
+    return 0.0
+
+
 type = sys.argv[1]
 
 write = True
@@ -43,7 +65,7 @@ if len(sys.argv) > 2 and sys.argv[2] == 'nowrite':
     write = False
 
 dim = 3
-initial_pos = initial_pos3D
+initial_pos = initial_pos_kukei
 if type == 'qtt3D':
     from data.qtt_data import QTTData as Data
     from hadou_scheme.hadou_qtt import HadouQTTScheme as Scheme
@@ -56,14 +78,17 @@ elif type == 'sparse3D':
 elif type == 'sparse1D':
     from data.sparse1D_data import Sparse1DData as Data
     dim = 1
-    initial_pos = initial_pos1D
+    initial_pos = initial_pos_kukei1D
+    from hadou_scheme.hadou_sparse_1D import HadouSparse1DScheme as Scheme
+
 elif type == 'sparse2D':
-    from data.sparse2D_data import Sparse2DData as Data
+    from data.sparse_data import SparseData as Data
+    from hadou_scheme.hadou_sparse import HadouSparseScheme as Scheme
     dim = 2
     initial_pos = initial_pos2D
 elif type == 'sparse2D2':
     from data.sparse2D_data2 import Sparse2DData2 as Data
-    initial_pos = initial_pos2D    
+    initial_pos = initial_pos2D
     dim = 2
 else:
     assert(False)

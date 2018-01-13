@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 import numpy as np
 import sys, os, yaml
 import matplotlib.pyplot as plt
@@ -57,7 +59,8 @@ else:
         elif dim == 2:
             Z = q.reshape([N, N], order='F')
 
-        ax.set_zlim([-0.5, 0.5])
-        surf = ax.plot_surface(X,Y,Z,cmap=cm.coolwarm, cstride=n-2, rstride=n-2, antialiased=True)
+        # ax.set_zlim([-0.5, 0.5])
+        # n=7: n-2 n=8: n
+        surf = ax.plot_surface(X,Y,Z,cmap=cm.coolwarm, cstride=n, rstride=n, antialiased=True)
 
 plt.show()
