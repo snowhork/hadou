@@ -13,8 +13,8 @@ base_name = 'q'
 with open(os.path.join(base_path, 'setting.yml'), "r") as f:
     setting = yaml.load(f)
 
-t_list = [0, 2, 4, 6]
-# t_list = range(9)
+# t_list = [0, 2, 4, 6]
+t_list = range(9)
 n = setting['n']
 dim = setting['dim']
 N = 2**n

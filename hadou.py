@@ -86,6 +86,11 @@ elif type == 'sparse2D':
     from hadou_scheme.hadou_sparse import HadouSparseScheme as Scheme
     dim = 2
     initial_pos = initial_pos2D
+elif type == 'sparse2D-cn':
+    from data.sparse_data_cn import SparseDataCN as Data
+    from hadou_scheme.hadou_sparse_cn import HadouSparseSchemeCN as Scheme
+    dim = 2
+    initial_pos = initial_pos2D
 elif type == 'sparse2D2':
     from data.sparse2D_data2 import Sparse2DData2 as Data
     initial_pos = initial_pos2D
@@ -96,7 +101,7 @@ else:
 current_time = time.strftime("20%y%d%m_%T")
 
 # 1.0/np.sqrt(3)/2.0 = 0.28867513459481292
-setting = Setting(n=7, dim=dim, tau=1e-4, tol=1e-4, max_T=0.3, rmax=10000, result_dir='{}/{}'.format(type, current_time))
+setting = Setting(n=6, dim=dim, tau=1e-3, tol=1e-4, max_T=6, rmax=10000, result_dir='{}/{}'.format(type, current_time))
 
 data = Data(setting, initial_pos)
 
