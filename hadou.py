@@ -7,6 +7,9 @@ from clock import Clock
 
 # def initial_pos3D(r):
 #     return np.sin(r[0]*2*np.pi)*np.sin(r[1]*2*np.pi)*np.sin(r[2]*2*np.pi)
+def initial_pos2D_yama(r):
+    return np.arctan(np.exp(3-14*np.sqrt((r[0]-0.5)**2 + (r[1]-0.5)**2)))
+
 
 def initial_pos3D(r):
     x = 0
@@ -90,7 +93,7 @@ elif type == 'sparse2D-cn':
     from data.sparse_data_cn import SparseDataCN as Data
     from hadou_scheme.hadou_sparse_cn import HadouSparseSchemeCN as Scheme
     dim = 2
-    initial_pos = initial_pos2D
+    initial_pos = initial_pos2D_yama
 elif type == 'sparse2D2':
     from data.sparse2D_data2 import Sparse2DData2 as Data
     initial_pos = initial_pos2D
@@ -101,7 +104,7 @@ else:
 current_time = time.strftime("20%y%d%m_%T")
 
 # 1.0/np.sqrt(3)/2.0 = 0.28867513459481292
-setting = Setting(n=6, dim=dim, tau=1e-3, tol=1e-4, max_T=6, rmax=10000, result_dir='{}/{}'.format(type, current_time))
+setting = Setting(n=6, dim=dim, tau=1e-3, tol=1e-4, max_T=3, rmax=10000, result_dir='{}/{}'.format(type, current_time))
 
 data = Data(setting, initial_pos)
 
