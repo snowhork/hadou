@@ -4,7 +4,7 @@ import tt
 import os
 
 class QTTData:
-    def __init__(self, setting, initial_pos):
+    def __init__(self, setting, initial_pos, nuemann=False):
         self.setting = setting
         self.initial_pos = initial_pos
         self.L = (-1.0/(setting.h*setting.h))*tt.qlaplace_dd([setting.n]*setting.dim)
@@ -18,6 +18,6 @@ class QTTData:
         self.write_num += 1
 
         print("write: step: {}, t: {}".format(self.step, self.step*self.setting.tau))
-        
+
     def show(self):
         print("step: {}, t: {}, r: {}".format(self.step, self.step*self.setting.tau, self.q.erank))
