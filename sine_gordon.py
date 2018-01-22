@@ -31,6 +31,10 @@ elif type == 'qtt3D-cn':
     from data.qtt_data_cn import QTTDataCN as Data
     from sine_gordon_scheme.sine_qtt_cn import SineQTTCNScheme as Scheme
     initial_pos = initial_pos3D
+elif type == 'qtt3D-cn-deim':
+    from data.qtt_data_cn import QTTDataCN as Data
+    from sine_gordon_scheme.sine_qtt_cn_deim import SineQTTCNSchemeDEIM as Scheme
+    initial_pos = initial_pos3D
 elif type == 'sparse3D':
     from data.sparse_data import SparseData as Data
     from sine_gordon_scheme.sine_sparse import SineSparseScheme as Scheme
@@ -55,7 +59,7 @@ else:
 current_time = time.strftime("20%y%d%m_%T")
 
 # 1.0/np.sqrt(3)/2.0 = 0.28867513459481292
-setting = Setting(n=7, dim=dim, tau=5e-3, tol=1e-4, max_T=2, rmax=10000, result_dir='sine/{}/{}'.format(type, current_time))
+setting = Setting(n=8, dim=dim, tau=5e-3, tol=1e-4, max_T=2, rmax=10000, result_dir='sine/{}/{}'.format(type, current_time))
 
 data = Data(setting, initial_pos)
 

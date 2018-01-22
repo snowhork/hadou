@@ -47,7 +47,7 @@ else:
 
         if dim == 3:
             q = q.reshape([N, N, N], order='F')
-            Z = q[32, :, :]
+            Z = q[31, :, :]
             max_iter = int(setting['max_T']/setting['tau'])
             _t = max_iter/8*t*setting['tau']
             ax.set_title("t={}".format(_t))
