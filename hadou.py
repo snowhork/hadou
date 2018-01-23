@@ -12,23 +12,27 @@ def initial_pos2D_yama(r):
 
 
 def initial_pos3D(r):
-    x = 0
-    if r[0] <= 0.8:
-        x = -np.abs(0.4-r[0]) + 0.4
-        x *= 1/0.4
-
-    y = 0
-    if r[1] <= 0.8:
-        y = -np.abs(0.4-r[1]) + 0.4
-        y *= 1/0.4
-
-    z = 0
-    if r[2] <= 0.8:
-        z = -np.abs(0.4-r[2]) + 0.4
-        z *= 1/0.4
+    return (np.sin(r[0]*np.pi)**4)*(np.sin(2*r[1]*np.pi)**4)*(np.sin(r[2]*np.pi))
 
 
-    return x*y*z
+# def initial_pos3D(r):
+#     x = 0
+#     if r[0] <= 0.8:
+#         x = -np.abs(0.4-r[0]) + 0.4
+#         x *= 1/0.4
+
+#     y = 0
+#     if r[1] <= 0.8:
+#         y = -np.abs(0.4-r[1]) + 0.4
+#         y *= 1/0.4
+
+#     z = 0
+#     if r[2] <= 0.8:
+#         z = -np.abs(0.4-r[2]) + 0.4
+#         z *= 1/0.4
+
+
+#     return x*y*z
 
 def initial_pos_kukei(r):
     x = 0
@@ -62,13 +66,24 @@ def initial_pos_kukei1D(r):
 
 
 type = sys.argv[1]
+n = int(sys.argv[2])
 
 write = True
-if len(sys.argv) > 2 and sys.argv[2] == 'nowrite':
+if len(sys.argv) > 3 and sys.argv[3] == 'nowrite':
     write = False
 
+inspect = False
+if len(sys.argv) > 3 and sys.argv[3] == 'inspect':
+    write = False
+    inspect = True
+
+
+file_name = time.strftime("20%y%d%m_%T")
+if len(sys.argv) > 4:
+    file_name = sys.argv[4]
+
 dim = 3
-initial_pos = initial_pos_kukei
+initial_pos = initial_pos3D
 if type == 'qtt3D':
     from data.qtt_data import QTTData as Data
     from hadou_scheme.hadou_qtt import HadouQTTScheme as Scheme
@@ -101,13 +116,12 @@ elif type == 'sparse2D2':
 else:
     assert(False)
 
-current_time = time.strftime("20%y%d%m_%T")
-
 # 1.0/np.sqrt(3)/2.0 = 0.28867513459481292
-setting = Setting(n=6, dim=dim, tau=1e-3, tol=1e-4, max_T=3, rmax=10000, result_dir='{}/{}'.format(type, current_time))
+setting = Setting(n=n, dim=dim, tau=1e-3, tol=1e-4, max_T=1.2, rmax=10000, result_dir='{}/{}'.format(type, file_name))
 
 data = Data(setting, initial_pos)
 
+print("n:{}".format(setting.n))
 class Calcurator(Data, Scheme):
     def __init__(self, setting, initial_pos):
         super(Calcurator, self).__init__(setting, initial_pos)
@@ -122,9 +136,17 @@ with Clock(output_path=setting.result_path()) as clock:
         if i%(setting.max_iter/8) == 0 and write:
             calc.write()
 
-        if i%100 == 0:
-            calc.show()
+        if inspect and i%10 == 0:
+            calc.info()
 
-calc.write()
-print("result_path: {}".format(setting.result_path()))
+        if i%100 == 0:
+            print(i)
+            if write:
+                calc.show()
+
+if inspect:
+    calc.info_write()
+else:
+    calc.write()
+print("{}".format(setting.result_path()))
 

@@ -19,9 +19,11 @@ class Setting:
         if not result_dir == None:
             if not os.path.exists(self.result_path()):
                 os.makedirs(self.result_path())
+            else:
+                assert(False) #dir already exists
 
             with open(os.path.join(self.result_path(), 'setting.yml'), "w") as f:
-                f.write(yaml.dump(self.to_dict(), default_flow_style=False))        
+                f.write(yaml.dump(self.to_dict(), default_flow_style=False))
 
 
     def qtt_shape(self):
@@ -47,4 +49,4 @@ class Setting:
             'rmax':self.rmax,
             'max_iter': self.max_iter
 
-        } 
+        }

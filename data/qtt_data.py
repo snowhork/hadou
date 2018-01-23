@@ -2,6 +2,8 @@ import numpy as np
 import itertools
 import tt
 import os
+from numpy.linalg import norm
+
 
 class QTTData:
     def __init__(self, setting, initial_pos, nuemann=False):
@@ -20,4 +22,14 @@ class QTTData:
         print("write: step: {}, t: {}".format(self.step, self.step*self.setting.tau))
 
     def show(self):
-        print("step: {}, t: {}, r: {}".format(self.step, self.step*self.setting.tau, self.q.erank))
+        N = self.setting.N
+        q = self.q.full().flatten(order='F').reshape([N, N, N], order='F')
+        p = self.p.full().flatten(order='F').reshape([N, N, N], order='F')
+
+        K = norm(p)**2/2.0
+        U = -3*norm(q)**2 + reduce(
+            lambda sum, i: sum + (q[i,:,:]*q[i+1,:,:]).sum() + (q[:,i,:]*q[:,i+1,:]).sum()+ (q[:,:,i]*q[:,:,i+1]).sum()
+            , xrange(self.setting.N-1), 0)
+
+        E = K - U/self.setting.h**2
+        print("step: {}, t: {}, r: {} E: {}".format(self.step, self.step*self.setting.tau, self.q.erank, E))

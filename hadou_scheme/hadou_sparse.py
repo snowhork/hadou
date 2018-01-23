@@ -1,6 +1,7 @@
 import itertools
 import numpy as np
-
+from numpy.linalg import norm
+import os
 class HadouSparseScheme(object):
     def initial_step(self):
         N = self.setting.N
@@ -12,6 +13,8 @@ class HadouSparseScheme(object):
         self.step = 1
         self.write_num = 0
 
+        self.info_E = []
+
     def next_step(self):
         tau = self.setting.tau
         next_q = self.q + tau*self.p
@@ -19,4 +22,23 @@ class HadouSparseScheme(object):
 
         self.q = next_q
         self.p = next_p
-        self.step += 1  
+        self.step += 1
+
+    def info(self):
+        N = self.setting.N
+        q = self.q.reshape([N, N, N], order='F')
+        p = self.p.reshape([N, N, N], order='F')
+
+        K = norm(p)**2/2.0
+        U = -3*norm(q)**2 + reduce(
+            lambda sum, i: sum + (q[i,:,:]*q[i+1,:,:]).sum() + (q[:,i,:]*q[:,i+1,:]).sum()+ (q[:,:,i]*q[:,:,i+1]).sum()
+            , xrange(self.setting.N-1), 0)
+
+        E = K - U/self.setting.h**2
+        print("step: {}, t: {}, E: {}".format(self.step, self.step*self.setting.tau, E))
+
+        self.info_E.append(E)
+
+    def info_write(self):
+        file_name = os.path.join(self.setting.result_path(), 'info_E.csv')
+        np.savetxt(file_name, np.array(self.info_E), delimiter=',')

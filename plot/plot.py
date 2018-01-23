@@ -13,8 +13,8 @@ base_name = 'q'
 with open(os.path.join(base_path, 'setting.yml'), "r") as f:
     setting = yaml.load(f)
 
-# t_list = [0, 2, 4, 6]
-t_list = range(9)
+t_list = [0, 2, 4, 6]
+# t_list = range(9)
 n = setting['n']
 dim = setting['dim']
 N = 2**n
@@ -47,7 +47,7 @@ else:
 
         if dim == 3:
             q = q.reshape([N, N, N], order='F')
-            Z = q[31, :, :]
+            Z = q[32, :, :]
             max_iter = int(setting['max_T']/setting['tau'])
             _t = max_iter/8*t*setting['tau']
             ax.set_title("t={}".format(_t))
@@ -59,7 +59,7 @@ else:
         elif dim == 2:
             Z = q.reshape([N, N], order='F')
 
-        # ax.set_zlim([-0.5, 0.5])
+        ax.set_zlim([-0.5, 0.5])
         # n=7: n-2 n=8: n
         surf = ax.plot_surface(X,Y,Z,cmap=cm.coolwarm, cstride=n, rstride=n, antialiased=True)
 
