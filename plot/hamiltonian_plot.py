@@ -25,13 +25,19 @@ plt.xlim([0, 1200])
 # plt.xticks(ns, ns)
 
 plt.ylabel("Hamiltonian")
-# plt.ylim([1,20])
+plt.ylim([0.998,1.017])
 
 
-HamiltonianPlot('QTT-tol:1e-4', 'result/qtt3D/n_8_tol4_inspect')
-HamiltonianPlot('QTT-tol:1e-6', 'result/qtt3D/n_8_inspect')
-HamiltonianPlot('Full', 'result/sparse3D/n_8_inspect')
+HamiltonianPlot('QTT-tol:1e-4',      'result/sine/qtt3D-cn/sine_2_n_6_tol4_inspect')
+HamiltonianPlot('QTT-deim-tol:1e-4', 'result/sine/qtt3D-cn-deim/sine_2_n_6_tol4_inspect_type2_3')
+HamiltonianPlot('CG-tol:1e-4',       'result/sine/sparse3D-cn/sine_2_n_6_tol4_inspect')
+HamiltonianPlot('CG-tol:1e-8',       'result/sine/sparse3D-cn/sine_2_n_6_tol8_inspect')
 
-plt.legend(loc="upper right")
+# HamiltonianPlot('QTT-tol:1e-4',      'result/sine/qtt3D-cn/sine_2_n_8_tol4_inspect')
+# HamiltonianPlot('QTT-deim-tol:1e-4', 'result/sine/qtt3D-cn-deim/sine_2_n_8_tol4_inspect_type2')
+# HamiltonianPlot('CG-tol:1e-4',       'result/sine/sparse3D-cn/sine_2_n_8_tol4_inspect')
+# HamiltonianPlot('CG-tol:1e-8',       'result/sine/sparse3D-cn/sine_2_n_8_tol8_inspect')
+
+plt.legend(loc="lower right")
 
 plt.show()

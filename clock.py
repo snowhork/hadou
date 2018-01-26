@@ -8,6 +8,12 @@ class Clock:
     def __enter__(self):
         print(self.name)
         self.begin = time.clock()
+        return self
+
+    @property
+    def current(self):
+        return time.clock() - self.begin
+
 
     def __exit__(self, exception_type, exception_value, traceback):
         res = time.clock() - self.begin

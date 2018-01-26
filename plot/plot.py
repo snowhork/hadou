@@ -13,7 +13,7 @@ base_name = 'q'
 with open(os.path.join(base_path, 'setting.yml'), "r") as f:
     setting = yaml.load(f)
 
-t_list = [0, 2, 4, 6]
+t_list = [0, 6, 7, 8]
 # t_list = range(9)
 n = setting['n']
 dim = setting['dim']
@@ -59,8 +59,8 @@ else:
         elif dim == 2:
             Z = q.reshape([N, N], order='F')
 
-        ax.set_zlim([-0.5, 0.5])
+        # ax.set_zlim([-0.5, 0.5])
         # n=7: n-2 n=8: n
-        surf = ax.plot_surface(X,Y,Z,cmap=cm.coolwarm, cstride=n, rstride=n, antialiased=True)
+        surf = ax.plot_surface(X,Y,Z,cmap=cm.coolwarm, cstride=n+3, rstride=n+3, antialiased=True)
 
 plt.show()

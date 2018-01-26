@@ -1,32 +1,19 @@
 import itertools
 import numpy as np
-import tt
-import os
-import util
-from tt.amen import amen_solve
+import tt, os
 from numpy.linalg import norm
 
-class SineQTTCNScheme(object):
+class SineQTTScheme(object):
     def initial_step(self):
         setting = self.setting
         N = setting.N
-        n = setting.n
-        dim = setting.dim
-        tau = setting.tau
 
         space_list = np.linspace(0, 1, N+2)[1:N+1]
         q_init_list = np.reshape(map(self.initial_pos, itertools.product(space_list, repeat=setting.dim)), setting.qtt_shape(), order='F')
 
         self.q = tt.vector(q_init_list, setting.tol)
-        self.old_q = tt.vector(q_init_list, setting.tol)
-
-        I = tt.eye(2, n*dim)
-
-        self.A = I - tau*tau/2*self.L
-        self.A = self.A.round(setting.tol)
-
-        self.B = 2*I + tau*tau/2*self.L
-        self.B = self.B.round(setting.tol)
+        self.p = setting.tau*(tt.matvec(self.L, self.q) - tt.vector(np.sin(q_init_list), setting.tol))
+        self.p = self.p.round(setting.tol, rmax=setting.rmax)
 
         self.step = 1
         self.write_num = 0
@@ -34,24 +21,25 @@ class SineQTTCNScheme(object):
         self.info_E = []
         self.info_erank = []
 
-
     def next_step(self):
         tau = self.setting.tau
         tol = self.setting.tol
+        rmax = self.setting.rmax
 
-        sine= tt.vector(1*tau*tau*np.sin(self.q.full()), tol)
+        next_q = self.q + tau*self.p
+        next_q = next_q.round(tol, rmax=rmax)
 
-        v = tt.matvec(self.B, self.q) - self.old_q - sine
+        next_p = self.p + tau*(tt.matvec(self.L, next_q) - tt.vector(np.sin(next_q.full()), tol))
+        next_p = next_p.round(tol, rmax=rmax)
 
-        self.old_q = self.q
-        self.q = amen_solve(self.A, v, v, tol, verb=0)
+        self.q = next_q
+        self.p = next_p
         self.step += 1
 
     def info(self):
         N = self.setting.N
         q = self.q.full().flatten(order='F').reshape([N, N, N], order='F')
-        old_q = self.old_q.full().flatten(order='F').reshape([N, N, N], order='F')
-        p = (q - old_q)/self.setting.tau
+        p = self.p.full().flatten(order='F').reshape([N, N, N], order='F')
 
         K = norm(p)**2/2.0
         U = -3*norm(q)**2 + reduce(

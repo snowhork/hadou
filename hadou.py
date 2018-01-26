@@ -117,7 +117,7 @@ else:
     assert(False)
 
 # 1.0/np.sqrt(3)/2.0 = 0.28867513459481292
-setting = Setting(n=n, dim=dim, tau=1e-3, tol=1e-4, max_T=1.2, rmax=10000, result_dir='{}/{}'.format(type, file_name))
+setting = Setting(n=n, dim=dim, tau=1e-3, tol=1e-6, max_T=1.2, rmax=10000, result_dir='{}/{}'.format(type, file_name))
 
 data = Data(setting, initial_pos)
 

@@ -2,6 +2,7 @@ import itertools
 import numpy as np
 from numpy.linalg import norm
 import os
+
 class HadouSparseScheme(object):
     def initial_step(self):
         N = self.setting.N
